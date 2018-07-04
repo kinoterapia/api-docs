@@ -120,7 +120,7 @@ a new short URL
     + title: Some url title (optional, string) - optionally set title of created URL to be shown in short.cm admin panel
     + tags: tag1,tag2 (optional, array) – you can set tags for your URLs for easy later search
     + allowDuplicates (optional, boolean) – allow to create multiple short urls for one long URL. Default – false
-    + expiresAt: 123456789000 (optional, number) – setup time, when link will be expired in milliseconds since epoch started. Requires small plan
+    + expiresAt: 123456789000 (optional, number) – link expiration in milliseconds since epoch started. [small plan]
     + expiredURL (optional, string) – URL to redirect. Requires small plan
     + password (optional, string) – setup password 
     + utmSource: google (optional, string) – Universal Tag Manager source
@@ -168,7 +168,7 @@ Returts list of Link objects. If any URL is failed to insert, it returns error o
             + title: Some url title (optional, string) - optionally set title of created URL to be shown in short.cm admin panel
             + tags: tag1,tag2 (optional, array) – you can set tags for your URLs for easy later search
             + allowDuplicates (optional, boolean) – allow to create multiple short urls for one long URL. Default – false
-            + expiresAt: 123456789000 (optional, number) – setup time, when link will be expired in milliseconds since epoch started. Requires small plan
+            + expiresAt: 123456789000 (optional, number) – link expiration in milliseconds since epoch started. [small plan]
             + expiredURL (optional, string) – URL to redirect. Requires small plan
             + password (optional, string) – setup password 
             + utmSource: google (optional, string) – Universal Tag Manager source
