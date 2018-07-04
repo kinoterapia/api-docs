@@ -1,0 +1,401 @@
+FORMAT: 1A
+HOST: https://api.short.cm/
+
+# Short.cm API
+
+Short.cm API allows you to make short URLs from your application
+
+## Authentication
+
+For authentication you need an API key. You can find it on "Connected apps & API" page in your user menu
+
+Authentication key should be sent as `Authorization` header
+
+## Domain API [/api/domains]
+
+### List domains [GET /api/domains]
+
+Shows all domains of current user
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 200 (application/json)
+
+    + Body
+
+            [
+                {
+                    "createdAt": "2015-05-31T16:15:00.000Z", 
+                    "hostname": "shrt.co", 
+                    "id": 4, 
+                    "linkType": "increment", 
+                    "redirect404": null, 
+                    "rootredirect": null, 
+                    "segmentKey": null, 
+                    "state": "not_registered", 
+                    "title": "ieuieuieu", 
+                    "updatedAt": "2015-11-16T17:10:48.000Z"
+                }
+            ]
+
++ Response 401
+
+## Link API [/links]
+
+### Expand API [GET /links/expand?domain={domain}&path={path}]
+
+Get long URL by shortened one
+
++ Parameters
+
+    + domain: shrt.co (required, string) - your registered domain name
+    + path: q8Wr5 (required, string) - path part of your link
+
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "originalURL": "http://kostenko.name"
+            }
+
+### Expand API by long url [GET /links/by-original-url?domain={domain}&originalURL={originalURL}]
+
+Get long URL by shortened one
+
++ Parameters
+
+    + domain: shrt.co (required, string) - your registered domain name
+    + originalURL: http://longurl.com (required, string) - your long URL
+
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "originalURL": "http://kostenko.name"
+            }
+
+### Create a New URL [POST /links]
+
+This method creates a new link. If parameter "path" is omitted, it generates
+path by algorithm, chosen in domain settings.
+
+If URL with a given path already exists and originalURL of the URL in database
+equal to originalURL argument, it returns information about existing URL
+
+If URL with a given path already exists and originalURL is different from
+originalURL in database, it returns error with a status `409`
+
+If URL with a given originalURL exists, and no path is given, it returns
+information about existing URL and does not create anything
+
+If URL with a given originalURL exists, and custom path is given, it creates
+a new short URL
+
+
++ Attributes
+
+    + domain: shrt.co (required, string) - your registered domain name
+    + originalURL: http://yourlongdomain.com/yourlonglink (required, string) - link, which you want to shorten
+    + path: q8Wr5 (optional, string) - optional path part of newly created link
+    + title: Some url title (optional, string) - optionally set title of created URL to be shown in short.cm admin panel
+    + tags: tag1,tag2 (optional, array) – you can set tags for your URLs for easy later search
+    + allowDuplicates (optional, boolean) – allow to create multiple short urls for one long URL. Default – false
+    + expiresAt (optional, string) – setup time, when link will be expired. Requires small plan
+    + expiredURL (optional, string) – URL to redirect. Requires small plan
+    + password (optional, string) – setup password 
+    + utmSource: google (optional, string) – Universal Tag Manager source
+    + utmMedium: cpc (optional, string) – Universal Tag Manager medium
+    + utmCampaign: spring_sale (optional, string) – Universal Tag Manager campaign
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 201 (application/json)
+
+    + Body
+    
+            {
+                "id": 12345,
+                "path": "c4Tb6S",
+                "originalURL": "http://yourlongdomain.com/yourlonglink",
+                "DomainId": 12345,
+                "shortURL": "https://shrt.co/c4Tb6S",
+                "clicks": 5,
+                "tags": [
+                    "tag1",
+                    "tag2"
+                ]
+            }
+
+### Bulk create URLs [POST /links/bulk]
+
+Please use this method if you need to create big packs of links. It accepts up to 1000 links in one API call.
+
+It works almost the same as single link creation endpoint, but accepts array of URLs and returns an array of responses
+
+Returts list of Link objects. If any URL is failed to insert, it returns error object instead as array element. Method is not transactional – it can insert some links from the list and return an error for others.
+
++ Attributes
+
+    + domain: shrt.co (required, string) - your registered domain name
+    + links (array) - array of link structures
+        + (object) – link structure
+            + originalURL: http://yourlongdomain.com/yourlonglink (required, string) - link, which you want to shorten
+            + path: q8Wr5 (optional, string) - optional path part of newly created link
+            + title: Some url title (optional, string) - optionally set title of created URL to be shown in short.cm admin panel
+            + tags: tag1,tag2 (optional, array) – you can set tags for your URLs for easy later search
+            + allowDuplicates (optional, boolean) – allow to create multiple short urls for one long URL. Default – false
+            + expiresAt (optional, string) – setup time, when link will be expired. Requires small plan
+            + expiredURL (optional, string) – URL to redirect. Requires small plan
+            + password (optional, string) – setup password 
+            + utmSource: google (optional, string) – Universal Tag Manager source
+            + utmMedium: cpc (optional, string) – Universal Tag Manager medium
+            + utmCampaign: spring_sale (optional, string) – Universal Tag Manager campaign
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 201 (application/json)
+
+    Array of link objects or error objects
+
+    + Body
+    
+            [
+                {
+                    "id": 12345,
+                    "path": "c4Tb6S",
+                    "originalURL": "http://yourlongdomain.com/yourlonglink",
+                    "DomainId": 12345,
+                    "shortURL": "https://shrt.co/c4Tb6S",
+                    "clicks": 5,
+                    "tags": [
+                        "tag1",
+                        "tag2"
+                    ],
+                    "success": true
+                }, {
+                    "status": 400,
+                    "message": "Parameter originalURL is missing",
+                    "success": false
+                }
+            ]
+
+### Update existing URL [POST /links/{link_id}]
+
+Update original url, title or path for existing URL
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+
+
++ Attributes
+
+    + originalURL: http://yourlongdomain.com/yourlonglink (optional, string) - link, which you want to shorten
+    + path: q8Wr5 (optional, string) - optional path part of newly created link
+    + title: Some url title (optional, string) - optionally set title of created URL to be shown in short.cm admin panel
+    + iphoneURL: http://itunes.com/123
+    + androidURL: http://android.com/123
+    + winmobileURL: http://microsoft.com/123
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 200 (application/json)
+
+### Delete URL [DELETE /links/{link_id}]
+
+Delete original URL
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+
+
++ Response 200 (application/json)
+
+### Analytics API [GET /links/statistics/{link_id}?period={period}]
+
+Get link click statistics
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+    + period: total (required, string) – one of total, month, day
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 200 (application/json)
+
+    + Body
+
+            {"totalClicks":3982,"clickStatistics":{"labels":["Nov 22nd","Nov 29th","Dec 6th"],"datasets":[{"label":"Clicks","fillColor":"rgba(0,181,208,1)","strokeColor":"rgb(0,181,208)","data":[0,0,0]}]},"referer":[{"referer":"test.short.cm","score":3976},{"referer":"direct","score":6}],"social":[{"social":"unk","score":3982}],"device":[{"device":"unk","score":3982}],"browser":[{"browser":"unk","score":3982}],"country":[{"country":"US","score":3980,"countryName":"United States"},{"country":"GB","score":1,"countryName":"United Kingdom"},{"country":"DE","score":1,"countryName":"Germany"}]}
+
+### Tweetbot API [GET /links/tweetbot?domain={domain}&originalURL={originalURL}&apiKey={apiKey}]
+
+Tweetbot supports custom link shorteners. To connect short.cm to tweetbot, enter this URL in Tweetbot account settings:
+
+    https://api.short.cm/links/tweetbot?domain=yourdomain.com&apiKey=yourapikey&originalURL=%@
+
++ Parameters
+
+    + domain: shrt.co (required, string) - Your short domain name
+    + originalURL: http://yourlongdomain.com/yourlonglink (required, string) - Link, which you want to shorten
+    + apiKey: yourkey123 (required, string) - Your API Key
+
++ Response 201 (application/json)
+
+## Link Country Targeting API [/link_country]
+
+### List Country Rules [GET /link_country/{link_id}]
+
+Returns list of country rules for a given link
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+
++ Response 200 (application/json)
+
+    + Body
+
+            [{"LinkId": 123, "country": "SE", "originalURL": "http://example.com"}]
+
+
+
+### Create Country Rule [POST /link_country/{link_id}]
+
+This method creates a new country targeting rule for given link
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+
++ Attributes
+
+    + country: SE (required, string) - Country ISO code
+    + originalURL: http://yourlongdomain.com/yourlonglink (required, string) - link, which you want to shorten
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 201 (application/json)
+
+ 
+### Delete Country Rule [DELETE /link_country/{link_id}/{country}]
+
+This method creates a new country targeting rule for given link
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+    + country: SE (required, string) - Country ISO code
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 201 (application/json)
+
+## Link Region Targeting API [/link_region]
+
+### List Region Rules [GET /link_region/{link_id}]
+
+Returns list of country rules for a given link
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+
++ Response 200 (application/json)
+
+    + Body
+
+            [{
+                "LinkId": 123,
+                "country": "US",
+                "region": "NY",
+                "originalURL": "http://example.com"
+            }]
+
+
+
+### Create Region Rule [POST /link_region/{link_id}]
+
+This method creates a new region targeting rule for given link
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+
++ Attributes
+
+    + country: US (required, string) - Country ISO code
+    + region: NY (required, string) - Country region code
+    + originalURL: http://yourlongdomain.com/yourlonglink (required, string) - link, which you want to shorten
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 201 (application/json)
+
+ 
+### Delete Region Rule [DELETE /link_region/{link_id}/{country}/{region}]
+
+This method creates a new region targeting rule for given link
+
++ Parameters
+
+    + link_id: 123 (required, number) - link id, you can get it using expand API
+    + country: US (required, string) - Country ISO code
+    + region: NY (required, string) – Region code
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 201 (application/json)
