@@ -44,6 +44,48 @@ Shows all domains of current user
 
 + Response 401
 
+### Create a domain [POST /domains/]
+
+Adds a domain to your short.cm account
+
++ Attributes
+
+    + Body
+
+    + hostname: shrt.co (required, string) - hostname of your new domain
+    + caseSensitive: false (boolean) - true if links on this domain should by case-sensitive
+    + hideReferer: false (boolean) - true if you don't want to show original referrers to destination URL
+    + httpsLinks: false (boolean) - true if you want short links to be generated with https
+    + linkType: random (required, string) - link generation algorithm (random/increment/secure)
+    + redirect404: https://website.com (string) - URL to redirect customers on non-existing short link
+    + rootredirect: https://website.com (string) - URL to redirect customers on main page visit
+
++ Request (application/json)
+
+    + Headers
+    
+            Authorization: your-api-key
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "state":"not_configured",
+                "cloaking":false,
+                "id":13498,
+                "hostname":"test22222.com",
+                "linkType":"random",
+                "rootredirect":"",
+                "redirect404":"",
+                "UserId":0,
+                "hideReferer":false,"caseSensitive":false,
+                "setupType":"dns","httpsLinks":false,
+                "updatedAt":"2018-09-01T05:48:31.114Z",
+                "createdAt":"2018-09-01T05:48:31.114Z"
+            }
+            
+
 ## Link API [/links]
 
 ### Expand API [GET /links/expand?domain={domain}&path={path}]
