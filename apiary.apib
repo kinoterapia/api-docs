@@ -7,7 +7,7 @@ Short.cm API allows you to make short URLs from your application
 
 ## Authentication
 
-For authentication you need an API key. You can find it on "Connected apps & API" page in your user menu
+For authentication you need an API key. You can find it in your [Integrations page](https://app.short.cm/users/connected_apps)
 
 Authentication key should be sent as `Authorization` header
 
@@ -199,7 +199,7 @@ Please use this method if you need to create big packs of links. It accepts up t
 
 It works almost the same as single link creation endpoint, but accepts array of URLs and returns an array of responses
 
-Returts list of Link objects. If any URL is failed to insert, it returns error object instead as array element. Method is not transactional – it can insert some links from the list and return an error for others.
+Returns list of Link objects. If any URL is failed to insert, it returns error object instead as array element. Method is not transactional – it can insert some links from the list and return an error for others.
 
 + Attributes
 
