@@ -167,6 +167,7 @@ a new short URL
     + utmMedium: cpc (optional, string) – Universal Tag Manager medium
     + utmCampaign: spring_sale (optional, string) – Universal Tag Manager campaign
     + cloaking: 1 (optional, number) – Enable link cloaking for this URL. [small plan]
+    + redirectType: 302 (optional, number) – Provide alternative status code for short URL redirect. See HTTP protocol codes documentation for more info
 
 
 + Request (application/json)
@@ -217,6 +218,7 @@ Returts list of Link objects. If any URL is failed to insert, it returns error o
             + utmMedium: cpc (optional, string) – Universal Tag Manager medium
             + utmCampaign: spring_sale (optional, string) – Universal Tag Manager campaign
             + cloaking: 1 (optional, number) – Enable link cloaking for this URL. [small plan]
+            + redirectType: 302 (optional, number) – Provide alternative status code for short URL redirect. See HTTP protocol codes documentation for more info
 
 + Request (application/json)
 
@@ -267,6 +269,16 @@ Update original url, title or path for existing URL
     + iphoneURL: http://itunes.com/123
     + androidURL: http://android.com/123
     + winmobileURL: http://microsoft.com/123
+    + redirectType: 302 (optional, number) – Provide alternative status code for short URL redirect. See HTTP protocol codes documentation for more info
+    + tags: tag1,tag2 (optional, array) – you can set tags for your URLs for easy later search
+    + allowDuplicates (optional, boolean) – allow to create multiple short urls for one long URL. Default – false
+    + expiresAt: 123456789000 (optional, number) – link expiration in milliseconds since epoch started. [small plan]
+    + expiredURL (optional, string) – URL to redirect. Requires small plan
+    + password (optional, string) – setup password 
+    + utmSource: google (optional, string) – Universal Tag Manager source
+    + utmMedium: cpc (optional, string) – Universal Tag Manager medium
+    + utmCampaign: spring_sale (optional, string) – Universal Tag Manager campaign
+    + cloaking: 1 (optional, number) – Enable link cloaking for this URL. [small plan]
 
 + Request (application/json)
 
@@ -431,8 +443,8 @@ This method creates a new region targeting rule for given link
 
 + Parameters
 
-    + link_id: 123 (required, number) - link id, you can get it using expand API
-    + country: US (required, string) - Country ISO code
+    + link_id: 123 (required, number) – link id, you can get it using expand API
+    + country: US (required, string) – Country ISO code
     + region: NY (required, string) – Region code
 
 + Request (application/json)
@@ -442,3 +454,16 @@ This method creates a new region targeting rule for given link
             Authorization: your-api-key
 
 + Response 201 (application/json)
+
+
+### Generate QR code for URL [GET https://api.qrserver.com/v1/create-qr-code/?size={width}x{height}&data={url}]
+
+We do not provide QR code generation API, but you can use API from [goQR.me](https://goqr.net/)
+
++ Parameters
+
+    + width: 150 (required, number) – QR code width
+    + height: 150 (required, string) – QR code width
+    + url: https://example.com/ (required, string) – Your short URL
+
++ Response 201 (image/png)
